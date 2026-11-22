@@ -13,6 +13,13 @@ abstract class Controller
         require APP_PATH . "/views/layouts/{$layout}.php";
     }
 
+    // Render tanpa layout (untuk respons AJAX)
+    protected function partial(string $view, array $data = []): void
+    {
+        extract($data, EXTR_SKIP);
+        require APP_PATH . "/views/{$view}.php";
+    }
+
     protected function json($data, int $status = 200): void
     {
         http_response_code($status);

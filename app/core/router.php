@@ -83,6 +83,9 @@ class Router
             case 'auth':
                 AuthMiddleware::handle();
                 break;
+            case 'guest':
+                GuestMiddleware::handle();
+                break;
             case 'role':
                 RoleMiddleware::handle($args);
                 break;

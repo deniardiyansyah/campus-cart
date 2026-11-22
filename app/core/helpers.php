@@ -113,14 +113,35 @@ function old(string $key, $default = '')
 
 function abort(int $code = 404): void
 {
+    $messages = [
+        403 => ['Akses ditolak', 'Kamu tidak punya izin untuk membuka halaman ini.'],
+        404 => ['Halaman tidak ditemukan', 'Alamat yang kamu buka tidak tersedia atau sudah dipindahkan.'],
+        419 => ['Sesi kedaluwarsa', 'Silakan muat ulang halaman lalu coba lagi.'],
+        500 => ['Terjadi kesalahan', 'Ada masalah di server. Coba lagi beberapa saat.'],
+    ];
+    [$heading, $text] = $messages[$code] ?? ['Terjadi kesalahan', ''];
+
     http_response_code($code);
-    $view = APP_PATH . "/views/errors/{$code}.php";
-    if (is_file($view)) {
-        require $view;
-    } else {
-        echo "Error {$code}";
-    }
+    $title = 'Error ' . $code;
+
+    ob_start();
+    require APP_PATH . '/views/errors/error.php';
+    $content = ob_get_clean();
+
+    require APP_PATH . '/views/layouts/main.php';
     exit;
+}
+
+function invalid_class(array $errors, string $field): string
+{
+    return isset($errors[$field]) ? ' is-invalid' : '';
+}
+
+function field_error(array $errors, string $field): string
+{
+    return isset($errors[$field])
+        ? '<div class="invalid-feedback">' . e($errors[$field]) . '</div>'
+        : '';
 }
 
 function current_path(): string
